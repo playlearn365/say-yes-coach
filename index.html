@@ -3,30 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!-- 標題：教師家長溝通話術精煉工具 -->
     <title>教師家長溝通話術精煉工具</title>
-    <!-- 載入 Tailwind CSS for modern styling -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* 使用 Google 的 Inter 字體 */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
         body {
             font-family: 'Inter', 'Noto Sans TC', sans-serif;
             background-color: #f7f7f9;
         }
-        /* 專為移動設備設計的容器 */
         @media (max-width: 640px) {
             #app-container {
                 padding: 1rem;
             }
         }
-        /* 自定義 placeholder 樣式，使其更清晰並支援換行 */
         textarea::placeholder {
-           color: #9ca3af; /* gray-400 */
-           opacity: 1; 
-           font-style: italic;
-           /* 確保 placeholder 換行 */
-           white-space: pre-wrap; 
+            color: #9ca3af;
+            opacity: 1;
+            font-style: italic;
+            white-space: pre-wrap;
         }
     </style>
 </head>
@@ -39,7 +34,7 @@
             幼兒園親師溝通 SAY YES 教練
         </h1>
         <p class="text-gray-500 mt-2 text-lg">
-            請選擇情境，AI 教練將協助您潤飾訊息。
+            請選擇情境，教練將依據您提供的資訊，協助潤飾訊息。
         </p>
     </header>
     
@@ -57,14 +52,14 @@
             </label>
             <label class="flex-1">
                 <input type="radio" name="format-selector" value="affair" id="format-affair" class="hidden peer">
-                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
+                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow- lg hover:bg-gray-200">
                     事務通知 (Affair)
                 </div>
             </label>
         </div>
     </div>
 
-    <!-- 老師輸入區 (使用 placeholder 進行引導) -->
+    <!-- 老師輸入區 -->
     <div class="mb-6">
         <label for="input-draft" class="block text-lg font-medium text-gray-700 mb-2">
             教練的結構化輸入資訊
@@ -89,20 +84,18 @@
     <!-- 錯誤/提示訊息區 -->
     <div id="message-box" class="mt-4 p-3 hidden rounded-lg bg-red-100 text-red-700 border border-red-200"></div>
 
-    <!-- AI 輸出區 -->
+    <!-- 輸出區 -->
     <div class="mt-8">
         <h2 class="text-xl font-bold text-gray-700 mb-3 border-b pb-1">
             潤飾後的家長訊息 (可直接複製使用)
         </h2>
         <div id="output-message" class="min-h-[250px] p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 whitespace-pre-wrap leading-relaxed transition-all duration-300">
-            <!-- 修正後的內容將顯示在這裡 -->
             按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。
         </div>
     </div>
 </div>
 
 <script>
-    // 必要的 UI 元素
     const inputDraft = document.getElementById('input-draft');
     const refineButton = document.getElementById('refine-button');
     const buttonText = document.getElementById('button-text');
@@ -112,102 +105,23 @@
     const formatEventRadio = document.getElementById('format-event');
     const formatAffairRadio = document.getElementById('format-affair');
 
-    // === 結構化指南 (用於 placeholder) ===
+    // === 結構化 placeholder 指南 ===
     const eventGuidance = `請在此輸入事件回覆資訊：
 {事件性質}: [簡短描述事件，例如：爭奪玩具推擠]
 {摘要}: [詳細描述事件過程，客觀事實]
-{已采取措施}: [老師如何處理，安撫、引導等]
+{已採取措施}: [老師如何處理，安撫、引導等]
 {家長配合}: [請家長在家協助引導的重點]
 {後續追蹤}: [老師在班上會持續進行的觀察或協助]`;
-    
+
     const affairGuidance = `請在此輸入事務通知資訊：
 {事務主題}: [例如：園遊會點心費]
 {重要資訊}: [點列式描述細節，例如：金額、內容、目的]
 {需要家長配合/回覆的事項}: [明確的行動呼籲，例如：週五前繳費]`;
 
-
     function updateInputPlaceholder(format) {
-        if (format === 'event') {
-            inputDraft.placeholder = eventGuidance;
-        } else if (format === 'affair') {
-            inputDraft.placeholder = affairGuidance;
-        }
+        inputDraft.placeholder = (format === 'event') ? eventGuidance : affairGuidance;
     }
 
-    // API 配置
-    const apiKey = ""; // 運行時將由 Canvas 環境提供
-    const modelName = 'gemini-2.5-flash-preview-09-2025';
-    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
-
-    // === 核心：系統指令 (Persona and Rules) ===
-    const systemPrompt = `你是一位頂尖的「幼兒園親師溝通SAY YES教練」。你的專長是幫助老師將「棘手的事件」或「繁雜的班務」轉換為「溫暖、專業、且能建立互信」的家長回覆。
-
-核心任務：使用者（老師）將會提供「結構化」的資訊。你的任務是接收這些資訊，並將其「潤飾」或「撰寫」成一則專業且同理的家長訊息。
-
-請先判斷老師使用的是以下哪一種格式（事件回覆 或 事務通知），然後根據該格式的原則進行撰寫。
-
-老師的輸入格式：
-格式一：事件回覆 (當你看到 {事件性質} 或 {已採取措施} 這些關鍵字時)
-{事件性質}: ...
-{摘要}: ...
-{已採取措施}: ...
-{家長配合}: ...
-{後續追蹤}: ...
-
-格式二：事務通知 (當你看到 {事務主題} 關鍵字時)
-{事務主題}: ...
-{重要資訊}: ...
-{需要家長配合/回覆的事項}: ...
-
-你的回覆原則：
-A. 當處理「事件」時 (使用格式一)
-1. 夥伴關係 (Partnership)：永遠使用「我們」的口吻。
-2. 同理心優先 (Empathy First)：必須先安撫情緒或表示關心。
-3. 正向表述 (Positive Framing)：將「問題行為」轉化為「學習的過程」。
-4. 客觀專業 (Objective)：基於「已採取措施」，清晰、冷靜地陳述事實。
-5. 聚焦合作 (Focus on Cooperation)：將「家長配合」轉化為「邀請」，而非「指令」。
-
-B. 當處理「事務」時 (使用格式二)
-1. 清晰簡潔 (Clarity & Brevity)：訊息必須讓家長「一眼看懂」。
-2. 條理分明 (Structured)：務必使用「點列式」(1, 2, 3...) 來呈現「重要資訊」。
-3. 語氣溫暖 (Warm Tone)：使用「您好」、「請您協助」、「謝謝您的配合」等詞彙，避免冰冷的公告。
-4. 行動呼籲 (Call to Action)：在結尾明確告知家長「需要做的下一件事」是什麼（例如：回覆、繳費、簽名）。
-
-你必須嚴格依照以下要求回覆：**只輸出**你產生的、可直接複製傳送給家長的**潤飾後訊息內容本身**。**絕對不可以**包含任何標題、前言、後記，或任何解釋（例如：『【潤飾後訊息】』、『【修改/撰K寫說明】*/，或是 \`---\` 分隔線）。`;
-    // =======================================================
-
-
-    /**
-     * 帶有指數退避機制的 fetch 函數
-     * @param {string} url - API 網址
-     * @param {object} options - fetch 選項
-     * @param {number} retries - 重試次數
-     */
-    async function backoffFetch(url, options, retries = 3) {
-        for (let i = 0; i < retries; i = i + 1) { // 修正：避免使用 i++ 以解決特定環境下的 SyntaxError
-            try {
-                const response = await fetch(url, options);
-                if (response.status === 429) {
-                    throw new Error("Rate limit exceeded (429)");
-                }
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
-                return response;
-            } catch (error) {
-                if (i < retries - 1 && error.message.includes("429")) {
-                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
-                    // 不在控制台顯示警告
-                    await new Promise(resolve => setTimeout(resolve, delay));
-                } else {
-                    throw error;
-                }
-            }
-        }
-        throw new Error("API call failed after multiple retries.");
-    }
-
-    // 顯示錯誤訊息
     function showMessage(text, isError = true) {
         messageBox.textContent = text;
         messageBox.className = isError
@@ -216,56 +130,131 @@ B. 當處理「事務」時 (使用格式二)
         messageBox.style.display = 'block';
     }
 
-    // 清除訊息
     function clearMessage() {
         messageBox.style.display = 'none';
         messageBox.textContent = '';
     }
 
-    // 主邏輯：精煉訊息
+    // 解析老師輸入的結構化文字
+    function parseStructuredInput(draft) {
+        const lines = draft.split('\n').map(l => l.trim()).filter(l => l.length > 0);
+        const data = {
+            事件性質: "",
+            摘要: "",
+            已採取措施: "",
+            家長配合: "",
+            後續追蹤: "",
+            事務主題: "",
+            重要資訊: "",
+            家長行動: "",
+            自由輸入: draft.trim()
+        };
+
+        lines.forEach(line => {
+            const sepIndex = line.indexOf(':') !== -1 ? line.indexOf(':') : line.indexOf('：');
+            if (sepIndex === -1) return;
+            const rawKey = line.slice(0, sepIndex).replace(/[{}]/g, "").trim();
+            const value = line.slice(sepIndex + 1).trim();
+
+            if (rawKey.includes('事件性質')) data.事件性質 = value;
+            else if (rawKey.includes('摘要')) data.摘要 = value;
+            else if (rawKey.includes('已採取措施') || rawKey.includes('已采取措施')) data.已採取措施 = value;
+            else if (rawKey.includes('家長配合')) data.家長配合 = value;
+            else if (rawKey.includes('後續追蹤')) data.後續追蹤 = value;
+            else if (rawKey.includes('事務主題')) data.事務主題 = value;
+            else if (rawKey.includes('重要資訊')) data.重要資訊 = value;
+            else if (rawKey.includes('需要家長配合') || rawKey.includes('回覆的事項')) data.家長行動 = value;
+        });
+
+        return data;
+    }
+
+    // 組合「事件回覆」訊息（本地模板）
+    function buildEventMessage(data) {
+        const e = (t) => t && t.length > 0 ? t : "（老師可依實際情況補充）";
+
+        return `家長您好：
+
+今天在園內發生一件關於「${e(data.事件性質)}」的小狀況，想先主動跟您說明，讓我們一起陪孩子練習面對人際互動。
+
+【事件經過】
+${e(data.摘要)}
+
+【老師當下的處理】
+${e(data.已採取措施)}
+
+【在家可以一起配合的方向】
+${e(data.家長配合)}
+
+【後續在園的追蹤】
+${e(data.後續追蹤)}
+
+我們都很關心孩子在園內的安全與情緒，也希望透過這次的經驗，陪孩子學會更好的表達與合作方式。如果您有任何想法或擔心，都非常歡迎隨時與我分享，一起討論最適合孩子的做法。
+
+謝謝您一直以來的支持與信任。`;
+    }
+
+    // 組合「事務通知」訊息（本地模板）
+    function buildAffairMessage(data) {
+        const e = (t) => t && t.length > 0 ? t : "（老師可依實際情況補充）";
+
+        let infoBlock = e(data.重要資訊);
+        // 若老師有用條列式，可稍微整理
+        if (!infoBlock.startsWith('1.') && infoBlock.includes('、')) {
+            const parts = infoBlock.split(/、|\n/).map(p => p.trim()).filter(p => p.length > 0);
+            if (parts.length > 1) {
+                infoBlock = parts.map((p, i) => `${i + 1}. ${p}`).join('\n');
+            }
+        }
+
+        return `家長您好：
+
+關於${e(data.事務主題)}，想先和您說明相關安排如下，方便您事先了解與準備。
+
+【重要資訊】
+${infoBlock}
+
+【請家長協助的部分】
+${e(data.家長行動)}
+
+若您在時間或安排上有任何困難，都可以再與我或園方聯繫，我們會一起想合適的調整方式。也謝謝您在忙碌之餘，仍願意與我們一同配合與支持。
+
+再次感謝您的理解與協助。`;
+    }
+
     async function refineMessage() {
         clearMessage();
         const draft = inputDraft.value.trim();
+        const isEvent = formatEventRadio.checked;
 
-        if (draft.length < 10) { // 檢查是否有足夠內容
-            showMessage("請提供完整的結構化資訊，以便教練進行轉換。", true);
+        if (draft.length < 5) {
+            showMessage("請先在上方輸入您想處理的事件或事務內容（可依 placeholder 結構填寫）。", true);
             return;
         }
 
-        // 設置載入狀態
+        // 簡單的「假 loading」效果，讓同事感覺有在運算
         refineButton.disabled = true;
-        buttonText.textContent = "正在請教練轉換中...";
+        buttonText.textContent = "教練思考中...";
         loadingSpinner.classList.remove('hidden');
-        outputMessage.textContent = '教練正在根據您的資訊，精煉最專業的回覆...';
+        outputMessage.textContent = '教練正在依據您提供的重點，整理合適的家長訊息...';
         outputMessage.classList.add('animate-pulse');
 
-        const payload = {
-            contents: [{ parts: [{ text: draft }] }],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
-        };
-
         try {
-            const response = await backoffFetch(apiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const data = parseStructuredInput(draft);
+            let resultText = "";
 
-            const result = await response.json();
-            const revisedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
-
-            if (revisedText) {
-                // 使用 pre-wrap 顯示以保留換行和格式
-                outputMessage.textContent = revisedText;
+            if (isEvent) {
+                resultText = buildEventMessage(data);
             } else {
-                throw new Error("API 回應格式錯誤或內容為空。");
+                resultText = buildAffairMessage(data);
             }
+
+            outputMessage.textContent = resultText;
         } catch (error) {
-            console.error("精煉訊息時發生錯誤:", error);
-            showMessage(`無法連接 AI 服務或修正失敗：${error.message}`, true);
-            outputMessage.textContent = '轉換失敗，請檢查您的網路連線或輸入格式。';
+            console.error(error);
+            showMessage("轉換過程中發生小問題，請稍後再試或檢查輸入格式。", true);
+            outputMessage.textContent = '轉換失敗，請重新整理頁面或稍後再試。';
         } finally {
-            // 清除載入狀態
             refineButton.disabled = false;
             buttonText.textContent = "轉換為專業溝通訊息";
             loadingSpinner.classList.add('hidden');
@@ -273,15 +262,11 @@ B. 當處理「事務」時 (使用格式二)
         }
     }
 
-    // 註冊事件監聽器
     refineButton.addEventListener('click', refineMessage);
     formatEventRadio.addEventListener('change', () => updateInputPlaceholder('event'));
     formatAffairRadio.addEventListener('change', () => updateInputPlaceholder('affair'));
 
-
-    // 初始化時，設定預設情境和輸出文本
     window.onload = () => {
-        // 預設選中 事件回覆 (Event)
         updateInputPlaceholder('event');
         outputMessage.textContent = '按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。';
     };
