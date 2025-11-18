@@ -29,6 +29,7 @@
 
 <div id="app-container" class="bg-white p-6 md:p-10 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100">
 
+    <!-- 標題 -->
     <header class="text-center mb-8">
         <h1 class="text-3xl font-extrabold text-pink-600 tracking-tight">
             幼兒園親師溝通 SAY YES 教練
@@ -52,23 +53,40 @@
             </label>
             <label class="flex-1">
                 <input type="radio" name="format-selector" value="affair" id="format-affair" class="hidden peer">
-                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow- lg hover:bg-gray-200">
+                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
                     事務通知 (Affair)
                 </div>
             </label>
         </div>
     </div>
 
-    <!-- 老師輸入區 -->
+    <!-- 老師輸入區（含固定提示框） -->
     <div class="mb-6">
         <label for="input-draft" class="block text-lg font-medium text-gray-700 mb-2">
             教練的結構化輸入資訊
         </label>
 
-        <textarea id="input-draft" rows="10" 
+        <!-- 事件回覆提示 -->
+        <div id="event-hint" class="mb-2 text-sm text-gray-500 italic bg-gray-50 border border-dashed border-gray-300 rounded-lg p-3">
+            範例填寫方式（事件回覆）：<br>
+            {事件性質}: 爭奪玩具推擠<br>
+            {摘要}: 兩位幼兒在角落區爭搶同一個玩具，情緒激動，有互相推擠的情形。<br>
+            {已採取措施}: 立即分開兩人，先安撫情緒，陪同說清楚彼此的想法與需求。<br>
+            {家長配合}: 在家可陪孩子練習輪流、說清楚需求的句子。<br>
+            {後續追蹤}: 老師會在角落區遊戲時多加觀察，適時提醒與引導。
+        </div>
+
+        <!-- 事務通知提示 -->
+        <div id="affair-hint" class="mb-2 text-sm text-gray-500 italic bg-gray-50 border border-dashed border-gray-300 rounded-lg p-3 hidden">
+            範例填寫方式（事務通知）：<br>
+            {事務主題}: 親子運動會補充說明<br>
+            {重要資訊}: 活動時間、集合地點、需自備物品等。<br>
+            {需要家長配合/回覆的事項}: 是否出席、飲食或健康注意事項回條。
+        </div>
+
+        <textarea id="input-draft" rows="8"
                   class="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-pink-500 focus:ring focus:ring-pink-200/50 transition duration-150 ease-in-out resize-none text-base"
-                  placeholder="">
-</textarea>
+                  placeholder="請用自己的方式輸入想跟家長說明的重點，可以照上方範例結構，也可以只寫一兩句關鍵描述。"></textarea>
     </div>
 
     <!-- 精煉按鈕 -->
@@ -104,22 +122,18 @@
     const messageBox = document.getElementById('message-box');
     const formatEventRadio = document.getElementById('format-event');
     const formatAffairRadio = document.getElementById('format-affair');
+    const eventHint = document.getElementById('event-hint');
+    const affairHint = document.getElementById('affair-hint');
 
-    // === 結構化 placeholder 指南 ===
-    const eventGuidance = `請在此輸入事件回覆資訊：
-{事件性質}: [簡短描述事件，例如：爭奪玩具推擠]
-{摘要}: [詳細描述事件過程，客觀事實]
-{已採取措施}: [老師如何處理，安撫、引導等]
-{家長配合}: [請家長在家協助引導的重點]
-{後續追蹤}: [老師在班上會持續進行的觀察或協助]`;
-
-    const affairGuidance = `請在此輸入事務通知資訊：
-{事務主題}: [例如：園遊會點心費]
-{重要資訊}: [點列式描述細節，例如：金額、內容、目的]
-{需要家長配合/回覆的事項}: [明確的行動呼籲，例如：週五前繳費]`;
-
-    function updateInputPlaceholder(format) {
-        inputDraft.placeholder = (format === 'event') ? eventGuidance : affairGuidance;
+    // 切換上方提示框
+    function updateHint(format) {
+        if (format === 'event') {
+            eventHint.classList.remove('hidden');
+            affairHint.classList.add('hidden');
+        } else {
+            eventHint.classList.add('hidden');
+            affairHint.classList.remove('hidden');
+        }
     }
 
     function showMessage(text, isError = true) {
@@ -135,8 +149,8 @@
         messageBox.textContent = '';
     }
 
-    // 解析老師輸入的結構化文字
-    function parseStructuredInput(draft) {
+    // 解析老師輸入的結構化文字（如果有就用，沒有就當成自由輸入）
+    function parseStructuredInput(draft, isEvent) {
         const lines = draft.split('\n').map(l => l.trim()).filter(l => l.length > 0);
         const data = {
             事件性質: "",
@@ -165,6 +179,25 @@
             else if (rawKey.includes('重要資訊')) data.重要資訊 = value;
             else if (rawKey.includes('需要家長配合') || rawKey.includes('回覆的事項')) data.家長行動 = value;
         });
+
+        // 如果老師沒有照結構填，就把整段當成摘要或事務內容
+        if (isEvent) {
+            if (!data.事件性質) {
+                const firstLine = lines[0] || draft;
+                data.事件性質 = firstLine.slice(0, 15);
+            }
+            if (!data.摘要) {
+                data.摘要 = draft.trim();
+            }
+        } else {
+            if (!data.事務主題) {
+                const firstLine = lines[0] || draft;
+                data.事務主題 = firstLine.slice(0, 20);
+            }
+            if (!data.重要資訊) {
+                data.重要資訊 = draft.trim();
+            }
+        }
 
         return data;
     }
@@ -199,7 +232,6 @@ ${e(data.後續追蹤)}
         const e = (t) => t && t.length > 0 ? t : "（老師可依實際情況補充）";
 
         let infoBlock = e(data.重要資訊);
-        // 若老師有用條列式，可稍微整理
         if (!infoBlock.startsWith('1.') && infoBlock.includes('、')) {
             const parts = infoBlock.split(/、|\n/).map(p => p.trim()).filter(p => p.length > 0);
             if (parts.length > 1) {
@@ -227,12 +259,12 @@ ${e(data.家長行動)}
         const draft = inputDraft.value.trim();
         const isEvent = formatEventRadio.checked;
 
-        if (draft.length < 5) {
-            showMessage("請先在上方輸入您想處理的事件或事務內容（可依 placeholder 結構填寫）。", true);
+        // 只要有打一點點就可以，不再要求完整格式
+        if (draft.length < 2) {
+            showMessage("請先在上方輸入想跟家長說明的內容，可以只寫一兩句。", true);
             return;
         }
 
-        // 簡單的「假 loading」效果，讓同事感覺有在運算
         refineButton.disabled = true;
         buttonText.textContent = "教練思考中...";
         loadingSpinner.classList.remove('hidden');
@@ -240,15 +272,8 @@ ${e(data.家長行動)}
         outputMessage.classList.add('animate-pulse');
 
         try {
-            const data = parseStructuredInput(draft);
-            let resultText = "";
-
-            if (isEvent) {
-                resultText = buildEventMessage(data);
-            } else {
-                resultText = buildAffairMessage(data);
-            }
-
+            const data = parseStructuredInput(draft, isEvent);
+            const resultText = isEvent ? buildEventMessage(data) : buildAffairMessage(data);
             outputMessage.textContent = resultText;
         } catch (error) {
             console.error(error);
@@ -263,11 +288,11 @@ ${e(data.家長行動)}
     }
 
     refineButton.addEventListener('click', refineMessage);
-    formatEventRadio.addEventListener('change', () => updateInputPlaceholder('event'));
-    formatAffairRadio.addEventListener('change', () => updateInputPlaceholder('affair'));
+    formatEventRadio.addEventListener('change', () => updateHint('event'));
+    formatAffairRadio.addEventListener('change', () => updateHint('affair'));
 
     window.onload = () => {
-        updateInputPlaceholder('event');
+        updateHint('event');
         outputMessage.textContent = '按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。';
     };
 </script>
