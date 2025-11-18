@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- 標題：教師家長溝通話術精煉工具 -->
+    <title>教師家長溝通話術精煉工具</title>
+    <!-- 載入 Tailwind CSS for modern styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* 使用 Google 的 Inter 字體 */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+        body {
+            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            background-color: #f7f7f9;
+        }
+        /* 專為移動設備設計的容器 */
+        @media (max-width: 640px) {
+            #app-container {
+                padding: 1rem;
+            }
+        }
+        /* 自定義 placeholder 樣式，使其更清晰並支援換行 */
+        textarea::placeholder {
+           color: #9ca3af; /* gray-400 */
+           opacity: 1; 
+           font-style: italic;
+           /* 確保 placeholder 換行 */
+           white-space: pre-wrap; 
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+<div id="app-container" class="bg-white p-6 md:p-10 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-extrabold text-pink-600 tracking-tight">
+            幼兒園親師溝通 SAY YES 教練
+        </h1>
+        <p class="text-gray-500 mt-2 text-lg">
+            請選擇情境，AI 教練將協助您潤飾訊息。
+        </p>
+    </header>
+    
+    <!-- 情境選擇器 -->
+    <div class="mb-4">
+        <label class="block text-lg font-medium text-gray-700 mb-2">
+            請選擇您想處理的情境：
+        </label>
+        <div class="flex space-x-4 bg-gray-100 p-2 rounded-lg">
+            <label class="flex-1">
+                <input type="radio" name="format-selector" value="event" id="format-event" class="hidden peer" checked>
+                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
+                    事件回覆 (Event)
+                </div>
+            </label>
+            <label class="flex-1">
+                <input type="radio" name="format-selector" value="affair" id="format-affair" class="hidden peer">
+                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
+                    事務通知 (Affair)
+                </div>
+            </label>
+        </div>
+    </div>
+
+    <!-- 老師輸入區 (使用 placeholder 進行引導) -->
+    <div class="mb-6">
+        <label for="input-draft" class="block text-lg font-medium text-gray-700 mb-2">
+            教練的結構化輸入資訊
+        </label>
+
+        <textarea id="input-draft" rows="10" 
+                  class="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-pink-500 focus:ring focus:ring-pink-200/50 transition duration-150 ease-in-out resize-none text-base"
+                  placeholder="">
+</textarea>
+    </div>
+
+    <!-- 精煉按鈕 -->
+    <button id="refine-button"
+            class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-150 ease-in-out shadow-lg transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed">
+        <span id="button-text">轉換為專業溝通訊息</span>
+        <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+    </button>
+
+    <!-- 錯誤/提示訊息區 -->
+    <div id="message-box" class="mt-4 p-3 hidden rounded-lg bg-red-100 text-red-700 border border-red-200"></div>
+
+    <!-- AI 輸出區 -->
+    <div class="mt-8">
+        <h2 class="text-xl font-bold text-gray-700 mb-3 border-b pb-1">
+            潤飾後的家長訊息 (可直接複製使用)
+        </h2>
+        <div id="output-message" class="min-h-[250px] p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 whitespace-pre-wrap leading-relaxed transition-all duration-300">
+            <!-- 修正後的內容將顯示在這裡 -->
+            按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。
+        </div>
+    </div>
+</div>
+
+<script>
+    // 必要的 UI 元素
+    const inputDraft = document.getElementById('input-draft');
+    const refineButton = document.getElementById('refine-button');
+    const buttonText = document.getElementById('button-text');
+    const loadingSpinner = document.getElementById('loading-spinner');
+    const outputMessage = document.getElementById('output-message');
+    const messageBox = document.getElementById('message-box');
+    const formatEventRadio = document.getElementById('format-event');
+    const formatAffairRadio = document.getElementById('format-affair');
+
+    // === 結構化指南 (用於 placeholder) ===
+    const eventGuidance = `請在此輸入事件回覆資訊：
+{事件性質}: [簡短描述事件，例如：爭奪玩具推擠]
+{摘要}: [詳細描述事件過程，客觀事實]
+{已采取措施}: [老師如何處理，安撫、引導等]
+{家長配合}: [請家長在家協助引導的重點]
+{後續追蹤}: [老師在班上會持續進行的觀察或協助]`;
+    
+    const affairGuidance = `請在此輸入事務通知資訊：
+{事務主題}: [例如：園遊會點心費]
+{重要資訊}: [點列式描述細節，例如：金額、內容、目的]
+{需要家長配合/回覆的事項}: [明確的行動呼籲，例如：週五前繳費]`;
+
+
+    function updateInputPlaceholder(format) {
+        if (format === 'event') {
+            inputDraft.placeholder = eventGuidance;
+        } else if (format === 'affair') {
+            inputDraft.placeholder = affairGuidance;
+        }
+    }
+
+    // API 配置
+    const apiKey = ""; // 運行時將由 Canvas 環境提供
+    const modelName = 'gemini-2.5-flash-preview-09-2025';
+    const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent?key=${apiKey}`;
+
+    // === 核心：系統指令 (Persona and Rules) ===
+    const systemPrompt = `你是一位頂尖的「幼兒園親師溝通SAY YES教練」。你的專長是幫助老師將「棘手的事件」或「繁雜的班務」轉換為「溫暖、專業、且能建立互信」的家長回覆。
+
+核心任務：使用者（老師）將會提供「結構化」的資訊。你的任務是接收這些資訊，並將其「潤飾」或「撰寫」成一則專業且同理的家長訊息。
+
+請先判斷老師使用的是以下哪一種格式（事件回覆 或 事務通知），然後根據該格式的原則進行撰寫。
+
+老師的輸入格式：
+格式一：事件回覆 (當你看到 {事件性質} 或 {已採取措施} 這些關鍵字時)
+{事件性質}: ...
+{摘要}: ...
+{已採取措施}: ...
+{家長配合}: ...
+{後續追蹤}: ...
+
+格式二：事務通知 (當你看到 {事務主題} 關鍵字時)
+{事務主題}: ...
+{重要資訊}: ...
+{需要家長配合/回覆的事項}: ...
+
+你的回覆原則：
+A. 當處理「事件」時 (使用格式一)
+1. 夥伴關係 (Partnership)：永遠使用「我們」的口吻。
+2. 同理心優先 (Empathy First)：必須先安撫情緒或表示關心。
+3. 正向表述 (Positive Framing)：將「問題行為」轉化為「學習的過程」。
+4. 客觀專業 (Objective)：基於「已採取措施」，清晰、冷靜地陳述事實。
+5. 聚焦合作 (Focus on Cooperation)：將「家長配合」轉化為「邀請」，而非「指令」。
+
+B. 當處理「事務」時 (使用格式二)
+1. 清晰簡潔 (Clarity & Brevity)：訊息必須讓家長「一眼看懂」。
+2. 條理分明 (Structured)：務必使用「點列式」(1, 2, 3...) 來呈現「重要資訊」。
+3. 語氣溫暖 (Warm Tone)：使用「您好」、「請您協助」、「謝謝您的配合」等詞彙，避免冰冷的公告。
+4. 行動呼籲 (Call to Action)：在結尾明確告知家長「需要做的下一件事」是什麼（例如：回覆、繳費、簽名）。
+
+你必須嚴格依照以下要求回覆：**只輸出**你產生的、可直接複製傳送給家長的**潤飾後訊息內容本身**。**絕對不可以**包含任何標題、前言、後記，或任何解釋（例如：『【潤飾後訊息】』、『【修改/撰K寫說明】*/，或是 \`---\` 分隔線）。`;
+    // =======================================================
+
+
+    /**
+     * 帶有指數退避機制的 fetch 函數
+     * @param {string} url - API 網址
+     * @param {object} options - fetch 選項
+     * @param {number} retries - 重試次數
+     */
+    async function backoffFetch(url, options, retries = 3) {
+        for (let i = 0; i < retries; i = i + 1) { // 修正：避免使用 i++ 以解決特定環境下的 SyntaxError
+            try {
+                const response = await fetch(url, options);
+                if (response.status === 429) {
+                    throw new Error("Rate limit exceeded (429)");
+                }
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response;
+            } catch (error) {
+                if (i < retries - 1 && error.message.includes("429")) {
+                    const delay = Math.pow(2, i) * 1000 + Math.random() * 1000;
+                    // 不在控制台顯示警告
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                } else {
+                    throw error;
+                }
+            }
+        }
+        throw new Error("API call failed after multiple retries.");
+    }
+
+    // 顯示錯誤訊息
+    function showMessage(text, isError = true) {
+        messageBox.textContent = text;
+        messageBox.className = isError
+            ? "mt-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-200"
+            : "mt-4 p-3 rounded-lg bg-green-100 text-green-700 border border-green-200";
+        messageBox.style.display = 'block';
+    }
+
+    // 清除訊息
+    function clearMessage() {
+        messageBox.style.display = 'none';
+        messageBox.textContent = '';
+    }
+
+    // 主邏輯：精煉訊息
+    async function refineMessage() {
+        clearMessage();
+        const draft = inputDraft.value.trim();
+
+        if (draft.length < 10) { // 檢查是否有足夠內容
+            showMessage("請提供完整的結構化資訊，以便教練進行轉換。", true);
+            return;
+        }
+
+        // 設置載入狀態
+        refineButton.disabled = true;
+        buttonText.textContent = "正在請教練轉換中...";
+        loadingSpinner.classList.remove('hidden');
+        outputMessage.textContent = '教練正在根據您的資訊，精煉最專業的回覆...';
+        outputMessage.classList.add('animate-pulse');
+
+        const payload = {
+            contents: [{ parts: [{ text: draft }] }],
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+        };
+
+        try {
+            const response = await backoffFetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            const revisedText = result.candidates?.[0]?.content?.parts?.[0]?.text;
+
+            if (revisedText) {
+                // 使用 pre-wrap 顯示以保留換行和格式
+                outputMessage.textContent = revisedText;
+            } else {
+                throw new Error("API 回應格式錯誤或內容為空。");
+            }
+        } catch (error) {
+            console.error("精煉訊息時發生錯誤:", error);
+            showMessage(`無法連接 AI 服務或修正失敗：${error.message}`, true);
+            outputMessage.textContent = '轉換失敗，請檢查您的網路連線或輸入格式。';
+        } finally {
+            // 清除載入狀態
+            refineButton.disabled = false;
+            buttonText.textContent = "轉換為專業溝通訊息";
+            loadingSpinner.classList.add('hidden');
+            outputMessage.classList.remove('animate-pulse');
+        }
+    }
+
+    // 註冊事件監聽器
+    refineButton.addEventListener('click', refineMessage);
+    formatEventRadio.addEventListener('change', () => updateInputPlaceholder('event'));
+    formatAffairRadio.addEventListener('change', () => updateInputPlaceholder('affair'));
+
+
+    // 初始化時，設定預設情境和輸出文本
+    window.onload = () => {
+        // 預設選中 事件回覆 (Event)
+        updateInputPlaceholder('event');
+        outputMessage.textContent = '按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。';
+    };
+</script>
+
+</body>
+</html>
