@@ -8,281 +8,373 @@
 <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #0f1117;
-  --surface: #181b24;
-  --surface2: #1f2333;
-  --border: #2a2f42;
-  --border-light: #363c54;
+  --bg: #f4f6fb;
+  --surface: #ffffff;
+  --surface2: #f8f9fc;
+  --border: #e2e6f0;
+  --border-focus: #4285f4;
   --accent: #4285f4;
-  --accent-glow: rgba(66,133,244,0.18);
+  --accent-hover: #2c6fe0;
   --accent-dim: rgba(66,133,244,0.08);
-  --green: #3ecf8e;
-  --green-bg: rgba(62,207,142,0.08);
-  --red: #f56565;
-  --red-bg: rgba(245,101,101,0.08);
-  --text: #e8eaf2;
-  --text-mid: #9ba3bf;
-  --text-soft: #5c6480;
+  --accent-glow: rgba(66,133,244,0.15);
+  --green: #1a9e6b;
+  --green-bg: #edfaf4;
+  --green-border: rgba(26,158,107,0.25);
+  --red: #c0392b;
+  --red-bg: #fdf0ee;
+  --red-border: rgba(192,57,43,0.2);
+  --text: #1a1f36;
+  --text-mid: #4a5378;
+  --text-soft: #8b93b0;
   --white: #ffffff;
   --radius: 12px;
   --radius-sm: 8px;
+  --shadow: 0 1px 4px rgba(26,31,54,0.06), 0 4px 16px rgba(26,31,54,0.06);
+  --shadow-sm: 0 1px 3px rgba(26,31,54,0.08);
 }
+
 * { box-sizing: border-box; margin: 0; padding: 0; }
+
 body {
   font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
-  padding: 2.5rem 1rem;
+  padding: 2.5rem 1rem 4rem;
   line-height: 1.6;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 70% 10%, rgba(66,133,244,0.06) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 10% 90%, rgba(62,207,142,0.04) 0%, transparent 50%);
 }
-.container { max-width: 700px; margin: 0 auto; animation: fadeUp 0.5s ease both; }
+
+.container {
+  max-width: 680px;
+  margin: 0 auto;
+  animation: fadeUp 0.45s ease both;
+}
+
 @keyframes fadeUp {
-  from { opacity: 0; transform: translateY(16px); }
+  from { opacity: 0; transform: translateY(14px); }
   to   { opacity: 1; transform: translateY(0); }
 }
-header { margin-bottom: 2.5rem; display: flex; align-items: flex-start; gap: 1.25rem; }
+
+/* ── Header ── */
+header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
 .logo-mark {
-  width: 48px; height: 48px;
-  background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 100%);
-  border-radius: 14px;
+  width: 46px; height: 46px; flex-shrink: 0;
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 100%);
+  border-radius: 13px;
   display: flex; align-items: center; justify-content: center;
   font-family: 'DM Serif Display', serif;
-  font-size: 1.4rem; color: #fff; flex-shrink: 0;
-  box-shadow: 0 4px 20px rgba(66,133,244,0.35);
+  font-size: 1.35rem; color: #fff;
+  box-shadow: 0 3px 12px rgba(66,133,244,0.3);
 }
+
 .header-text h1 {
   font-family: 'DM Serif Display', serif;
-  font-size: clamp(1.4rem, 4vw, 1.9rem);
-  font-weight: 400; color: var(--white);
-  letter-spacing: -0.01em; line-height: 1.2;
+  font-size: clamp(1.3rem, 4vw, 1.75rem);
+  font-weight: 400;
+  color: var(--text);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
 }
-.header-text p { color: var(--text-mid); font-size: 0.875rem; font-weight: 300; margin-top: 0.35rem; }
-.section-label {
-  font-size: 0.7rem; font-weight: 600;
-  letter-spacing: 0.1em; text-transform: uppercase;
-  color: var(--text-soft); margin-bottom: 0.75rem;
+
+.header-text p {
+  color: var(--text-soft);
+  font-size: 0.875rem;
+  margin-top: 0.2rem;
 }
-.block {
+
+/* ── Card ── */
+.card {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
+  padding: 1.5rem;
   margin-bottom: 1rem;
+  box-shadow: var(--shadow);
 }
-.block.has-key { border-color: rgba(62,207,142,0.4); }
 
-/* API Key */
-.api-input-wrap { position: relative; }
-.api-input-wrap input {
+.card.key-ok { border-color: rgba(26,158,107,0.35); }
+
+/* ── Section label ── */
+.label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.free-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  color: var(--green);
+  background: var(--green-bg);
+  border: 1px solid var(--green-border);
+  padding: 0.1rem 0.45rem;
+  border-radius: 99px;
+}
+
+/* ── API input ── */
+.input-wrap { position: relative; }
+
+.input-wrap input,
+textarea {
   width: 100%;
   background: var(--surface2);
-  border: 1px solid var(--border);
+  border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   color: var(--text);
-  font-family: 'DM Sans', monospace;
-  font-size: 0.85rem;
-  padding: 0.65rem 2.5rem 0.65rem 0.9rem;
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem;
+  padding: 0.7rem 0.95rem;
   outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-  letter-spacing: 0.04em;
+  transition: border-color 0.18s, box-shadow 0.18s, background 0.18s;
 }
-.api-input-wrap input:focus {
-  border-color: var(--accent);
+
+.input-wrap input { padding-right: 2.6rem; letter-spacing: 0.03em; }
+
+.input-wrap input:focus,
+textarea:focus {
+  border-color: var(--border-focus);
   box-shadow: 0 0 0 3px var(--accent-glow);
+  background: var(--white);
 }
-.api-toggle {
-  position: absolute; right: 0.6rem; top: 50%;
+
+textarea { resize: vertical; min-height: 160px; line-height: 1.75; }
+textarea::placeholder { color: var(--text-soft); font-style: italic; }
+
+.eye-btn {
+  position: absolute; right: 0.7rem; top: 50%;
   transform: translateY(-50%);
   background: none; border: none;
   color: var(--text-soft); cursor: pointer; font-size: 0.85rem;
+  transition: color 0.15s; padding: 0.2rem;
 }
-.api-toggle:hover { color: var(--text-mid); }
+.eye-btn:hover { color: var(--text-mid); }
+
 .api-status {
-  font-size: 0.78rem; color: var(--text-soft);
-  margin-top: 0.55rem; display: flex; align-items: center; gap: 0.4rem;
+  font-size: 0.78rem;
+  margin-top: 0.5rem;
+  display: flex; align-items: center; gap: 0.4rem;
+  color: var(--text-soft);
 }
-.api-status.ok { color: var(--green); }
-.api-status.ok::before { content: "●"; font-size: 0.55rem; }
-.api-status.empty::before { content: "○"; font-size: 0.55rem; }
-.api-hint { font-size: 0.75rem; color: var(--text-soft); margin-top: 0.5rem; }
-.api-hint a { color: var(--accent); text-decoration: none; }
+.api-status.ok { color: var(--green); font-weight: 500; }
+.api-status.ok::before { content: "●"; font-size: 0.5rem; }
+.api-status.empty::before { content: "○"; font-size: 0.5rem; }
+
+.api-hint {
+  font-size: 0.775rem;
+  color: var(--text-soft);
+  margin-top: 0.6rem;
+  line-height: 1.6;
+}
+.api-hint a { color: var(--accent); text-decoration: none; font-weight: 500; }
 .api-hint a:hover { text-decoration: underline; }
 
-/* Free badge */
-.free-badge {
-  display: inline-block;
-  background: var(--green-bg);
-  border: 1px solid rgba(62,207,142,0.3);
-  color: var(--green);
-  font-size: 0.7rem; font-weight: 700;
-  letter-spacing: 0.08em; text-transform: uppercase;
-  padding: 0.15rem 0.5rem; border-radius: 99px;
-  margin-left: 0.5rem; vertical-align: middle;
-}
-
-/* Tabs */
+/* ── Tabs ── */
 .tabs {
   display: flex; gap: 0.4rem;
   background: var(--bg);
-  border: 1px solid var(--border);
-  padding: 0.3rem; border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.3rem;
 }
 .tab-item { flex: 1; }
 .tab-item input { display: none; }
 .tab-label {
   display: block; text-align: center;
-  padding: 0.55rem; border-radius: 6px;
-  cursor: pointer; font-size: 0.875rem;
-  font-weight: 400; color: var(--text-soft);
+  padding: 0.55rem 0.5rem;
+  border-radius: 6px; cursor: pointer;
+  font-size: 0.875rem; font-weight: 400;
+  color: var(--text-soft);
   transition: all 0.18s; user-select: none;
 }
 .tab-item input:checked + .tab-label {
-  background: var(--surface2); color: var(--text);
-  font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+  background: var(--white);
+  color: var(--accent);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
 }
 
-/* Hint */
+/* ── Hint box ── */
 .hint-box {
   margin-top: 1rem;
-  background: var(--accent-dim);
-  border: 1px solid rgba(66,133,244,0.2);
+  background: #f0f5ff;
+  border: 1px solid #d0deff;
   border-radius: var(--radius-sm);
-  padding: 0.85rem 1rem;
-  font-size: 0.8rem; color: var(--text-mid);
-  line-height: 1.7; white-space: pre-line;
+  padding: 0.9rem 1rem;
+  font-size: 0.8rem;
+  color: var(--text-mid);
+  line-height: 1.75;
+  white-space: pre-line;
 }
-.hint-box .hint-title {
-  font-weight: 600; color: var(--accent);
-  margin-bottom: 0.4rem; font-size: 0.75rem;
-  text-transform: uppercase; letter-spacing: 0.07em;
+.hint-box .ht {
+  font-weight: 700;
+  color: var(--accent);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.45rem;
 }
 .hidden { display: none !important; }
 
-/* Textarea */
-textarea {
-  width: 100%;
-  background: var(--surface2);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-sm);
-  color: var(--text);
-  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
-  font-size: 0.9rem; line-height: 1.7;
-  padding: 0.85rem 1rem;
-  resize: vertical; min-height: 160px;
-  outline: none;
-  transition: border-color 0.2s, box-shadow 0.2s;
-}
-textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
-textarea::placeholder { color: var(--text-soft); font-style: italic; }
-
-/* Tone chips */
+/* ── Tone chips ── */
 .tone-row { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
 .tone-chip input { display: none; }
 .tone-chip label {
-  display: block; padding: 0.3rem 0.75rem;
-  border-radius: 99px; border: 1px solid var(--border);
-  font-size: 0.78rem; color: var(--text-soft);
-  cursor: pointer; transition: all 0.15s; user-select: none;
+  display: block;
+  padding: 0.3rem 0.8rem;
+  border-radius: 99px;
+  border: 1.5px solid var(--border);
+  font-size: 0.78rem;
+  color: var(--text-soft);
+  cursor: pointer;
+  transition: all 0.15s;
+  user-select: none;
+  background: var(--surface);
 }
 .tone-chip input:checked + label {
-  border-color: var(--accent); color: var(--accent);
-  background: var(--accent-dim); font-weight: 600;
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+  font-weight: 600;
 }
-.tone-chip label:hover { border-color: var(--border-light); color: var(--text-mid); }
+.tone-chip label:hover { border-color: #b0bcd8; color: var(--text-mid); }
 
-/* Button */
-.btn-primary {
-  width: 100%; background: var(--accent); border: none;
-  border-radius: var(--radius); color: #fff;
+/* ── Message ── */
+.msg-box {
+  display: none;
+  border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem;
+  font-size: 0.85rem;
+  margin-bottom: 1rem;
+  line-height: 1.5;
+}
+.msg-box.error { background: var(--red-bg); border: 1px solid var(--red-border); color: var(--red); }
+
+/* ── Submit button ── */
+.btn-main {
+  width: 100%;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
   font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
   font-size: 0.95rem; font-weight: 600;
-  padding: 0.9rem 1.5rem; cursor: pointer;
-  transition: all 0.18s;
+  padding: 0.9rem 1.5rem;
+  cursor: pointer;
   display: flex; align-items: center; justify-content: center; gap: 0.6rem;
-  box-shadow: 0 4px 16px rgba(66,133,244,0.3);
+  box-shadow: 0 3px 12px rgba(66,133,244,0.28);
   margin-bottom: 1rem;
+  transition: all 0.18s;
+  letter-spacing: 0.01em;
 }
-.btn-primary:hover:not(:disabled) {
-  background: #5a95f5;
-  box-shadow: 0 6px 20px rgba(66,133,244,0.4);
+.btn-main:hover:not(:disabled) {
+  background: var(--accent-hover);
+  box-shadow: 0 5px 18px rgba(66,133,244,0.38);
   transform: translateY(-1px);
 }
-.btn-primary:active:not(:disabled) { transform: translateY(0); }
-.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+.btn-main:active:not(:disabled) { transform: translateY(0); }
+.btn-main:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
 
 .spinner {
   width: 16px; height: 16px;
-  border: 2px solid rgba(255,255,255,0.3);
-  border-top-color: #fff; border-radius: 50%;
-  animation: spin 0.7s linear infinite; display: none;
+  border: 2.5px solid rgba(255,255,255,0.35);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: none;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
 
-.message-box {
-  display: none; border-radius: var(--radius-sm);
-  padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1rem;
-  line-height: 1.6;
-}
-.message-box.error { background: var(--red-bg); border: 1px solid rgba(245,101,101,0.25); color: var(--red); }
-
-/* Output */
-.output-block {
+/* ── Output ── */
+.output-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius); overflow: hidden;
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 .output-header {
   display: flex; align-items: center; justify-content: space-between;
-  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+  padding: 0.9rem 1.25rem;
+  background: var(--surface2);
+  border-bottom: 1px solid var(--border);
 }
-.output-header-left { display: flex; align-items: center; gap: 0.6rem; }
-.output-dot {
+.output-left { display: flex; align-items: center; gap: 0.55rem; }
+.dot {
   width: 8px; height: 8px; border-radius: 50%;
-  background: var(--border-light); transition: background 0.3s;
+  background: #d0d5e8; transition: all 0.3s;
 }
-.output-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(62,207,142,0.5); }
-.output-title {
-  font-size: 0.8rem; font-weight: 600;
-  text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-soft);
+.dot.live { background: var(--green); box-shadow: 0 0 6px rgba(26,158,107,0.4); }
+.output-label {
+  font-size: 0.72rem; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.09em;
+  color: var(--text-soft);
 }
 .btn-copy {
-  background: var(--surface2); border: 1px solid var(--border);
-  border-radius: var(--radius-sm); color: var(--text-mid);
-  font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
-  padding: 0.35rem 0.8rem; cursor: pointer; transition: all 0.15s;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem; font-weight: 500;
+  padding: 0.3rem 0.8rem;
+  cursor: pointer; transition: all 0.15s;
   display: flex; align-items: center; gap: 0.4rem;
 }
 .btn-copy:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
 .btn-copy.copied { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+
 .output-body {
-  padding: 1.5rem; min-height: 200px;
-  font-size: 0.9rem; line-height: 1.9;
-  color: var(--text-soft); white-space: pre-wrap; font-style: italic;
+  padding: 1.5rem 1.5rem;
+  min-height: 200px;
+  font-size: 0.92rem; line-height: 1.9;
+  color: var(--text-soft);
+  white-space: pre-wrap;
+  font-style: italic;
 }
-.output-body.has-content { color: var(--text); font-style: normal; }
+.output-body.ready { color: var(--text); font-style: normal; }
+
 .cursor {
-  display: inline-block; width: 2px; height: 1em;
+  display: inline-block; width: 2px; height: 1.1em;
   background: var(--accent); vertical-align: text-bottom;
-  animation: blink 0.8s step-end infinite; margin-left: 1px;
+  animation: blink 0.75s step-end infinite; margin-left: 1px;
 }
 @keyframes blink { 50% { opacity: 0; } }
 
-footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: var(--text-soft); }
+/* ── Footer ── */
+footer {
+  text-align: center;
+  margin-top: 2rem;
+  font-size: 0.75rem;
+  color: var(--text-soft);
+}
 
 @media (max-width: 480px) {
-  body { padding: 1.5rem 0.75rem; }
-  .block { padding: 1.1rem 1.2rem; }
-  header { gap: 1rem; }
+  body { padding: 1.25rem 0.75rem 3rem; }
+  .card { padding: 1.1rem 1.1rem; }
+  header { gap: 0.85rem; }
+  .tone-chip label { font-size: 0.75rem; }
 }
 </style>
 </head>
 <body>
 <div class="container">
 
+  <!-- Header -->
   <header>
     <div class="logo-mark">S</div>
     <div class="header-text">
@@ -292,14 +384,14 @@ footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: var(--
   </header>
 
   <!-- API Key -->
-  <div class="block" id="api-block">
-    <div class="section-label">
+  <div class="card" id="api-card">
+    <div class="label">
       Google Gemini API Key
       <span class="free-badge">免費</span>
     </div>
-    <div class="api-input-wrap">
-      <input type="password" id="api-key-input" placeholder="AIza…" autocomplete="off" spellcheck="false">
-      <button class="api-toggle" id="api-toggle" title="顯示/隱藏">👁</button>
+    <div class="input-wrap">
+      <input type="password" id="api-input" placeholder="AIza…" autocomplete="off" spellcheck="false">
+      <button class="eye-btn" id="eye-btn">👁</button>
     </div>
     <div class="api-status empty" id="api-status">尚未輸入 API Key</div>
     <div class="api-hint">
@@ -310,267 +402,242 @@ footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: var(--
   </div>
 
   <!-- Scenario -->
-  <div class="block">
-    <div class="section-label">情境選擇</div>
+  <div class="card">
+    <div class="label">情境選擇</div>
     <div class="tabs">
       <div class="tab-item">
-        <input type="radio" name="scenario" value="event" id="tab-event" checked>
+        <input type="radio" name="scene" value="event" id="tab-event" checked>
         <label class="tab-label" for="tab-event">🔔 事件回覆</label>
       </div>
       <div class="tab-item">
-        <input type="radio" name="scenario" value="affair" id="tab-affair">
+        <input type="radio" name="scene" value="affair" id="tab-affair">
         <label class="tab-label" for="tab-affair">📋 事務通知</label>
       </div>
     </div>
-    <div class="hint-box" id="event-hint">
-<div class="hint-title">填寫範例 — 事件回覆</div>{事件性質}: 爭奪玩具推擠
+    <div class="hint-box" id="hint-event">
+<div class="ht">填寫範例 — 事件回覆</div>{事件性質}: 爭奪玩具推擠
 {摘要}: 兩位幼兒在角落區爭搶同一個玩具，情緒激動，互相推擠。
 {已採取措施}: 立即分開，安撫情緒，陪同說清楚彼此的需求。
 {家長配合}: 在家可練習輪流、說清楚需求的句子。
 {後續追蹤}: 老師會在角落區多加觀察，適時引導。</div>
-    <div class="hint-box hidden" id="affair-hint">
-<div class="hint-title">填寫範例 — 事務通知</div>{事務主題}: 親子運動會補充說明
+    <div class="hint-box hidden" id="hint-affair">
+<div class="ht">填寫範例 — 事務通知</div>{事務主題}: 親子運動會補充說明
 {重要資訊}: 時間、集合地點、需自備物品。
 {家長配合}: 是否出席、飲食注意事項回條。</div>
   </div>
 
   <!-- Input -->
-  <div class="block">
-    <div class="section-label">輸入內容</div>
-    <textarea id="input-draft" placeholder="可以照上方範例結構填寫，也可以只寫幾句關鍵描述，AI 會自動補完。"></textarea>
+  <div class="card">
+    <div class="label">輸入內容</div>
+    <textarea id="draft" placeholder="可以照上方範例結構填寫，也可以只寫幾句關鍵描述，AI 會自動補完。"></textarea>
     <div class="tone-row">
       <div class="tone-chip">
-        <input type="radio" name="tone" value="warm" id="tone-warm" checked>
-        <label for="tone-warm">💛 溫暖關懷</label>
+        <input type="radio" name="tone" value="warm" id="t-warm" checked>
+        <label for="t-warm">💛 溫暖關懷</label>
       </div>
       <div class="tone-chip">
-        <input type="radio" name="tone" value="professional" id="tone-pro">
-        <label for="tone-pro">📌 專業正式</label>
+        <input type="radio" name="tone" value="professional" id="t-pro">
+        <label for="t-pro">📌 專業正式</label>
       </div>
       <div class="tone-chip">
-        <input type="radio" name="tone" value="concise" id="tone-concise">
-        <label for="tone-concise">⚡ 簡潔明瞭</label>
+        <input type="radio" name="tone" value="concise" id="t-short">
+        <label for="t-short">⚡ 簡潔明瞭</label>
       </div>
     </div>
   </div>
 
-  <div class="message-box" id="message-box"></div>
+  <!-- Error -->
+  <div class="msg-box" id="msg-box"></div>
 
-  <button class="btn-primary" id="refine-btn">
+  <!-- Button -->
+  <button class="btn-main" id="go-btn">
     <div class="spinner" id="spinner"></div>
-    <span id="btn-text">✦ 生成專業訊息</span>
+    <span id="btn-label">✦ 生成專業訊息</span>
   </button>
 
   <!-- Output -->
-  <div class="output-block">
+  <div class="output-card">
     <div class="output-header">
-      <div class="output-header-left">
-        <div class="output-dot" id="output-dot"></div>
-        <div class="output-title">潤飾後的家長訊息</div>
+      <div class="output-left">
+        <div class="dot" id="dot"></div>
+        <div class="output-label">潤飾後的家長訊息</div>
       </div>
       <button class="btn-copy" id="copy-btn">
         <span id="copy-icon">⎘</span>
-        <span id="copy-text">複製</span>
+        <span id="copy-label">複製</span>
       </button>
     </div>
-    <div class="output-body" id="output-body">按下「生成專業訊息」後，AI 將依據您的輸入產出完整家長訊息。</div>
+    <div class="output-body" id="output">按下「生成專業訊息」後，AI 將依據您的輸入產出完整家長訊息。</div>
   </div>
 
   <footer>SAY YES 教練 · Powered by Gemini · Key 僅存於本機 · 每日免費 1500 次</footer>
 </div>
 
 <script>
-const apiKeyInput = document.getElementById('api-key-input');
-const apiToggle   = document.getElementById('api-toggle');
-const apiStatus   = document.getElementById('api-status');
-const apiBlock    = document.getElementById('api-block');
-const tabEvent    = document.getElementById('tab-event');
-const tabAffair   = document.getElementById('tab-affair');
-const eventHint   = document.getElementById('event-hint');
-const affairHint  = document.getElementById('affair-hint');
-const inputDraft  = document.getElementById('input-draft');
-const refineBtn   = document.getElementById('refine-btn');
-const btnText     = document.getElementById('btn-text');
-const spinner     = document.getElementById('spinner');
-const messageBox  = document.getElementById('message-box');
-const outputBody  = document.getElementById('output-body');
-const outputDot   = document.getElementById('output-dot');
-const copyBtn     = document.getElementById('copy-btn');
-const copyIcon    = document.getElementById('copy-icon');
-const copyText    = document.getElementById('copy-text');
+const apiInput  = document.getElementById('api-input');
+const eyeBtn    = document.getElementById('eye-btn');
+const apiCard   = document.getElementById('api-card');
+const apiStatus = document.getElementById('api-status');
+const tabEvent  = document.getElementById('tab-event');
+const tabAffair = document.getElementById('tab-affair');
+const hintEvent = document.getElementById('hint-event');
+const hintAffair= document.getElementById('hint-affair');
+const draft     = document.getElementById('draft');
+const goBtn     = document.getElementById('go-btn');
+const btnLabel  = document.getElementById('btn-label');
+const spinner   = document.getElementById('spinner');
+const msgBox    = document.getElementById('msg-box');
+const output    = document.getElementById('output');
+const dot       = document.getElementById('dot');
+const copyBtn   = document.getElementById('copy-btn');
+const copyIcon  = document.getElementById('copy-icon');
+const copyLabel = document.getElementById('copy-label');
 
-// Restore saved key
-const savedKey = localStorage.getItem('sy_gemini_key');
-if (savedKey) { apiKeyInput.value = savedKey; updateApiStatus(savedKey); }
+// Restore key
+const saved = localStorage.getItem('sy_gemini_key');
+if (saved) { apiInput.value = saved; setKeyStatus(saved); }
 
-function updateApiStatus(val) {
-  if (val && val.startsWith('AIza') && val.length > 20) {
+function setKeyStatus(v) {
+  if (v && v.startsWith('AIza') && v.length > 20) {
     apiStatus.textContent = 'API Key 已設定';
     apiStatus.className = 'api-status ok';
-    apiBlock.classList.add('has-key');
-  } else if (val) {
+    apiCard.classList.add('key-ok');
+  } else if (v) {
     apiStatus.textContent = '格式可能有誤（應以 AIza 開頭）';
     apiStatus.className = 'api-status';
-    apiBlock.classList.remove('has-key');
+    apiCard.classList.remove('key-ok');
   } else {
     apiStatus.textContent = '尚未輸入 API Key';
     apiStatus.className = 'api-status empty';
-    apiBlock.classList.remove('has-key');
+    apiCard.classList.remove('key-ok');
   }
 }
 
-apiKeyInput.addEventListener('input', () => {
-  const val = apiKeyInput.value.trim();
-  updateApiStatus(val);
-  if (val) localStorage.setItem('sy_gemini_key', val);
-  else localStorage.removeItem('sy_gemini_key');
+apiInput.addEventListener('input', () => {
+  const v = apiInput.value.trim();
+  setKeyStatus(v);
+  v ? localStorage.setItem('sy_gemini_key', v) : localStorage.removeItem('sy_gemini_key');
 });
 
-apiToggle.addEventListener('click', () => {
-  apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+eyeBtn.addEventListener('click', () => {
+  apiInput.type = apiInput.type === 'password' ? 'text' : 'password';
 });
 
-tabEvent.addEventListener('change', () => {
-  eventHint.classList.remove('hidden');
-  affairHint.classList.add('hidden');
-});
-tabAffair.addEventListener('change', () => {
-  affairHint.classList.remove('hidden');
-  eventHint.classList.add('hidden');
-});
+tabEvent.addEventListener('change', () => { hintEvent.classList.remove('hidden'); hintAffair.classList.add('hidden'); });
+tabAffair.addEventListener('change', () => { hintAffair.classList.remove('hidden'); hintEvent.classList.add('hidden'); });
 
-function showMsg(text, type = 'error') {
-  messageBox.textContent = text;
-  messageBox.className = 'message-box ' + type;
-  messageBox.style.display = 'block';
-}
-function clearMsg() { messageBox.style.display = 'none'; }
+function showErr(t) { msgBox.textContent = t; msgBox.className = 'msg-box error'; msgBox.style.display = 'block'; }
+function clearMsg() { msgBox.style.display = 'none'; }
 
 copyBtn.addEventListener('click', () => {
-  if (!outputBody.classList.contains('has-content')) return;
-  navigator.clipboard.writeText(outputBody.textContent).then(() => {
+  if (!output.classList.contains('ready')) return;
+  navigator.clipboard.writeText(output.textContent).then(() => {
     copyBtn.classList.add('copied');
-    copyIcon.textContent = '✓'; copyText.textContent = '已複製';
-    setTimeout(() => {
-      copyBtn.classList.remove('copied');
-      copyIcon.textContent = '⎘'; copyText.textContent = '複製';
-    }, 2000);
+    copyIcon.textContent = '✓'; copyLabel.textContent = '已複製';
+    setTimeout(() => { copyBtn.classList.remove('copied'); copyIcon.textContent = '⎘'; copyLabel.textContent = '複製'; }, 2000);
   });
 });
 
-function buildPrompt(isEvent, tone, draft) {
-  const toneDesc = {
-    warm: '語氣溫暖、有同理心，像一位關心孩子的好老師，讓家長感到被尊重和支持。',
-    professional: '語氣正式、專業，措辭嚴謹，讓家長感受到教師的專業度與責任心。',
-    concise: '語氣簡潔明瞭，不冗長，條列清楚，讓家長快速掌握重點。'
+function buildPrompt(isEvent, tone, text) {
+  const tones = {
+    warm: '溫暖、有同理心，讓家長感到被尊重與支持。',
+    professional: '正式、專業、嚴謹，展現教師的責任心。',
+    concise: '簡潔明瞭，條列清楚，讓家長快速掌握重點。'
   };
+  const base = `你是幼兒園親師溝通專家。請用繁體中文（台灣用語）潤飾以下內容為家長訊息。
+語氣：${tones[tone]}
+規則：不使用任何 markdown 符號，直接輸出訊息本文，不加前言。`;
 
-  const intro = `你是一位幼兒園親師溝通專家，擅長幫助老師將口語描述潤飾為得體、專業的家長訊息。
-語氣要求：${toneDesc[tone]}
-語言：繁體中文，台灣用語。
-不要加任何 markdown 格式符號。
-直接輸出訊息本文，不要有任何前言或說明。`;
+  const struct = isEvent
+    ? '\n結構：開頭問候 → 事件說明 → 老師處置 → 家長在家配合方向 → 後續追蹤 → 溫暖結尾。資訊不足時合理補充。'
+    : '\n結構：開頭問候 → 說明主旨 → 重要資訊（條列）→ 家長配合事項 → 溫暖結尾。資訊不足時合理補充。';
 
-  const structure = isEvent
-    ? `\n\n根據以下老師提供的事件資訊，寫一封給家長的訊息，包含：開頭問候、事件說明、老師已採取的措施、家長在家可配合的方向、後續在園的追蹤、溫暖結尾。若資訊不完整，請合理補充。`
-    : `\n\n根據以下老師提供的事務資訊，寫一封給家長的通知，包含：開頭問候與主旨說明、重要資訊（條列）、需家長配合的事項、溫暖結尾。若資訊不完整，請合理補充。`;
-
-  return intro + structure + `\n\n老師提供的資訊：\n${draft}`;
+  return `${base}${struct}\n\n老師提供的資訊：\n${text}`;
 }
 
-async function refineMessage() {
+async function generate() {
   clearMsg();
-  const apiKey  = apiKeyInput.value.trim();
-  const draft   = inputDraft.value.trim();
-  const isEvent = tabEvent.checked;
-  const tone    = document.querySelector('input[name="tone"]:checked').value;
+  const key    = apiInput.value.trim();
+  const text   = draft.value.trim();
+  const isEvt  = tabEvent.checked;
+  const tone   = document.querySelector('input[name="tone"]:checked').value;
 
-  if (!apiKey) { showMsg('請先輸入 Google Gemini API Key。'); apiKeyInput.focus(); return; }
-  if (!draft || draft.length < 3) { showMsg('請先輸入想跟家長說明的內容。'); inputDraft.focus(); return; }
+  if (!key)          { showErr('請先輸入 Google Gemini API Key。'); apiInput.focus(); return; }
+  if (text.length<3) { showErr('請先輸入想跟家長說明的內容。'); draft.focus(); return; }
 
-  refineBtn.disabled = true;
+  goBtn.disabled = true;
   spinner.style.display = 'block';
-  btnText.textContent = 'AI 思考中…';
-  outputBody.textContent = '';
-  outputBody.classList.remove('has-content');
-  outputDot.classList.remove('active');
+  btnLabel.textContent = 'AI 思考中…';
+  output.textContent = '';
+  output.classList.remove('ready');
+  dot.classList.remove('live');
 
-  const cursorEl = document.createElement('span');
-  cursorEl.className = 'cursor';
-  outputBody.appendChild(cursorEl);
+  const cur = document.createElement('span');
+  cur.className = 'cursor';
+  output.appendChild(cur);
 
-  const prompt = buildPrompt(isEvent, tone, draft);
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${apiKey}&alt=sse`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${key}&alt=sse`;
 
   try {
-    const response = await fetch(url, {
+    const res = await fetch(url, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        contents: [{ role: 'user', parts: [{ text: buildPrompt(isEvt, tone, text) }] }],
         generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
       })
     });
 
-    if (!response.ok) {
-      let errMsg = `API 錯誤（${response.status}）`;
+    if (!res.ok) {
+      let e = `API 錯誤（${res.status}）`;
       try {
-        const errData = await response.json();
-        if (errData.error?.message) errMsg = errData.error.message;
-        if (response.status === 400) errMsg = 'API Key 無效或請求格式錯誤，請確認 Key 是否正確。';
-        if (response.status === 403) errMsg = 'API Key 無效或未啟用 Gemini API，請至 aistudio.google.com 確認。';
-        if (response.status === 429) errMsg = '今日免費額度已達上限，請明天再試。';
+        const d = await res.json();
+        if (d.error?.message) e = d.error.message;
+        if (res.status === 400 || res.status === 403) e = 'API Key 無效或未啟用 Gemini API，請至 aistudio.google.com 確認。';
+        if (res.status === 429) e = '今日免費額度已達上限，請明天再試。';
       } catch(_) {}
-      throw new Error(errMsg);
+      throw new Error(e);
     }
 
-    const reader  = response.body.getReader();
+    const reader  = res.body.getReader();
     const decoder = new TextDecoder();
-    let fullText  = '';
-    let buffer    = '';
+    let full = '', buf = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      buffer = lines.pop(); // keep incomplete line
-
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n');
+      buf = lines.pop();
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
-        if (!data || data === '[DONE]') continue;
+        const d = line.slice(6).trim();
+        if (!d || d === '[DONE]') continue;
         try {
-          const parsed = JSON.parse(data);
-          const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (text) {
-            fullText += text;
-            outputBody.textContent = fullText;
-            outputBody.appendChild(cursorEl);
-            outputBody.classList.add('has-content');
-          }
+          const p = JSON.parse(d);
+          const t = p.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (t) { full += t; output.textContent = full; output.appendChild(cur); output.classList.add('ready'); }
         } catch(_) {}
       }
     }
 
-    cursorEl.remove();
-    outputBody.textContent = fullText || '（未收到回應，請再試一次）';
-    if (fullText) outputBody.classList.add('has-content');
-    outputDot.classList.add('active');
+    cur.remove();
+    output.textContent = full || '（未收到回應，請再試一次）';
+    if (full) { output.classList.add('ready'); dot.classList.add('live'); }
 
   } catch (err) {
-    cursorEl.remove();
-    outputBody.textContent = '';
-    outputBody.classList.remove('has-content');
-    showMsg('⚠ ' + (err.message || '發生未知錯誤，請稍後再試。'));
+    cur.remove();
+    output.textContent = '';
+    output.classList.remove('ready');
+    showErr('⚠ ' + (err.message || '發生未知錯誤，請稍後再試。'));
   } finally {
-    refineBtn.disabled = false;
+    goBtn.disabled = false;
     spinner.style.display = 'none';
-    btnText.textContent = '✦ 生成專業訊息';
+    btnLabel.textContent = '✦ 生成專業訊息';
   }
 }
 
-refineBtn.addEventListener('click', refineMessage);
+goBtn.addEventListener('click', generate);
 </script>
 </body>
 </html>
