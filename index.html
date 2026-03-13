@@ -1,301 +1,576 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>教師家長溝通話術精煉工具</title>
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
-        body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
-            background-color: #f7f7f9;
-        }
-        @media (max-width: 640px) {
-            #app-container {
-                padding: 1rem;
-            }
-        }
-        textarea::placeholder {
-            color: #9ca3af;
-            opacity: 1;
-            font-style: italic;
-            white-space: pre-wrap;
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAY YES 教練 — 親師溝通工具</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f1117;
+  --surface: #181b24;
+  --surface2: #1f2333;
+  --border: #2a2f42;
+  --border-light: #363c54;
+  --accent: #4285f4;
+  --accent-glow: rgba(66,133,244,0.18);
+  --accent-dim: rgba(66,133,244,0.08);
+  --green: #3ecf8e;
+  --green-bg: rgba(62,207,142,0.08);
+  --red: #f56565;
+  --red-bg: rgba(245,101,101,0.08);
+  --text: #e8eaf2;
+  --text-mid: #9ba3bf;
+  --text-soft: #5c6480;
+  --white: #ffffff;
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding: 2.5rem 1rem;
+  line-height: 1.6;
+  background-image:
+    radial-gradient(ellipse 60% 40% at 70% 10%, rgba(66,133,244,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 10% 90%, rgba(62,207,142,0.04) 0%, transparent 50%);
+}
+.container { max-width: 700px; margin: 0 auto; animation: fadeUp 0.5s ease both; }
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+header { margin-bottom: 2.5rem; display: flex; align-items: flex-start; gap: 1.25rem; }
+.logo-mark {
+  width: 48px; height: 48px;
+  background: linear-gradient(135deg, #4285f4 0%, #34a853 50%, #fbbc05 100%);
+  border-radius: 14px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.4rem; color: #fff; flex-shrink: 0;
+  box-shadow: 0 4px 20px rgba(66,133,244,0.35);
+}
+.header-text h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(1.4rem, 4vw, 1.9rem);
+  font-weight: 400; color: var(--white);
+  letter-spacing: -0.01em; line-height: 1.2;
+}
+.header-text p { color: var(--text-mid); font-size: 0.875rem; font-weight: 300; margin-top: 0.35rem; }
+.section-label {
+  font-size: 0.7rem; font-weight: 600;
+  letter-spacing: 0.1em; text-transform: uppercase;
+  color: var(--text-soft); margin-bottom: 0.75rem;
+}
+.block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.25rem 1.5rem;
+  margin-bottom: 1rem;
+}
+.block.has-key { border-color: rgba(62,207,142,0.4); }
+
+/* API Key */
+.api-input-wrap { position: relative; }
+.api-input-wrap input {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'DM Sans', monospace;
+  font-size: 0.85rem;
+  padding: 0.65rem 2.5rem 0.65rem 0.9rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  letter-spacing: 0.04em;
+}
+.api-input-wrap input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.api-toggle {
+  position: absolute; right: 0.6rem; top: 50%;
+  transform: translateY(-50%);
+  background: none; border: none;
+  color: var(--text-soft); cursor: pointer; font-size: 0.85rem;
+}
+.api-toggle:hover { color: var(--text-mid); }
+.api-status {
+  font-size: 0.78rem; color: var(--text-soft);
+  margin-top: 0.55rem; display: flex; align-items: center; gap: 0.4rem;
+}
+.api-status.ok { color: var(--green); }
+.api-status.ok::before { content: "●"; font-size: 0.55rem; }
+.api-status.empty::before { content: "○"; font-size: 0.55rem; }
+.api-hint { font-size: 0.75rem; color: var(--text-soft); margin-top: 0.5rem; }
+.api-hint a { color: var(--accent); text-decoration: none; }
+.api-hint a:hover { text-decoration: underline; }
+
+/* Free badge */
+.free-badge {
+  display: inline-block;
+  background: var(--green-bg);
+  border: 1px solid rgba(62,207,142,0.3);
+  color: var(--green);
+  font-size: 0.7rem; font-weight: 700;
+  letter-spacing: 0.08em; text-transform: uppercase;
+  padding: 0.15rem 0.5rem; border-radius: 99px;
+  margin-left: 0.5rem; vertical-align: middle;
+}
+
+/* Tabs */
+.tabs {
+  display: flex; gap: 0.4rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  padding: 0.3rem; border-radius: var(--radius-sm);
+}
+.tab-item { flex: 1; }
+.tab-item input { display: none; }
+.tab-label {
+  display: block; text-align: center;
+  padding: 0.55rem; border-radius: 6px;
+  cursor: pointer; font-size: 0.875rem;
+  font-weight: 400; color: var(--text-soft);
+  transition: all 0.18s; user-select: none;
+}
+.tab-item input:checked + .tab-label {
+  background: var(--surface2); color: var(--text);
+  font-weight: 600; box-shadow: 0 1px 4px rgba(0,0,0,0.3);
+}
+
+/* Hint */
+.hint-box {
+  margin-top: 1rem;
+  background: var(--accent-dim);
+  border: 1px solid rgba(66,133,244,0.2);
+  border-radius: var(--radius-sm);
+  padding: 0.85rem 1rem;
+  font-size: 0.8rem; color: var(--text-mid);
+  line-height: 1.7; white-space: pre-line;
+}
+.hint-box .hint-title {
+  font-weight: 600; color: var(--accent);
+  margin-bottom: 0.4rem; font-size: 0.75rem;
+  text-transform: uppercase; letter-spacing: 0.07em;
+}
+.hidden { display: none !important; }
+
+/* Textarea */
+textarea {
+  width: 100%;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text);
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  font-size: 0.9rem; line-height: 1.7;
+  padding: 0.85rem 1rem;
+  resize: vertical; min-height: 160px;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+textarea:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-glow); }
+textarea::placeholder { color: var(--text-soft); font-style: italic; }
+
+/* Tone chips */
+.tone-row { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+.tone-chip input { display: none; }
+.tone-chip label {
+  display: block; padding: 0.3rem 0.75rem;
+  border-radius: 99px; border: 1px solid var(--border);
+  font-size: 0.78rem; color: var(--text-soft);
+  cursor: pointer; transition: all 0.15s; user-select: none;
+}
+.tone-chip input:checked + label {
+  border-color: var(--accent); color: var(--accent);
+  background: var(--accent-dim); font-weight: 600;
+}
+.tone-chip label:hover { border-color: var(--border-light); color: var(--text-mid); }
+
+/* Button */
+.btn-primary {
+  width: 100%; background: var(--accent); border: none;
+  border-radius: var(--radius); color: #fff;
+  font-family: 'DM Sans', 'Noto Sans TC', sans-serif;
+  font-size: 0.95rem; font-weight: 600;
+  padding: 0.9rem 1.5rem; cursor: pointer;
+  transition: all 0.18s;
+  display: flex; align-items: center; justify-content: center; gap: 0.6rem;
+  box-shadow: 0 4px 16px rgba(66,133,244,0.3);
+  margin-bottom: 1rem;
+}
+.btn-primary:hover:not(:disabled) {
+  background: #5a95f5;
+  box-shadow: 0 6px 20px rgba(66,133,244,0.4);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) { transform: translateY(0); }
+.btn-primary:disabled { opacity: 0.5; cursor: not-allowed; box-shadow: none; }
+
+.spinner {
+  width: 16px; height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff; border-radius: 50%;
+  animation: spin 0.7s linear infinite; display: none;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.message-box {
+  display: none; border-radius: var(--radius-sm);
+  padding: 0.75rem 1rem; font-size: 0.85rem; margin-bottom: 1rem;
+  line-height: 1.6;
+}
+.message-box.error { background: var(--red-bg); border: 1px solid rgba(245,101,101,0.25); color: var(--red); }
+
+/* Output */
+.output-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius); overflow: hidden;
+}
+.output-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
+}
+.output-header-left { display: flex; align-items: center; gap: 0.6rem; }
+.output-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--border-light); transition: background 0.3s;
+}
+.output-dot.active { background: var(--green); box-shadow: 0 0 6px rgba(62,207,142,0.5); }
+.output-title {
+  font-size: 0.8rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-soft);
+}
+.btn-copy {
+  background: var(--surface2); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); color: var(--text-mid);
+  font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 500;
+  padding: 0.35rem 0.8rem; cursor: pointer; transition: all 0.15s;
+  display: flex; align-items: center; gap: 0.4rem;
+}
+.btn-copy:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.btn-copy.copied { border-color: var(--green); color: var(--green); background: var(--green-bg); }
+.output-body {
+  padding: 1.5rem; min-height: 200px;
+  font-size: 0.9rem; line-height: 1.9;
+  color: var(--text-soft); white-space: pre-wrap; font-style: italic;
+}
+.output-body.has-content { color: var(--text); font-style: normal; }
+.cursor {
+  display: inline-block; width: 2px; height: 1em;
+  background: var(--accent); vertical-align: text-bottom;
+  animation: blink 0.8s step-end infinite; margin-left: 1px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+footer { text-align: center; margin-top: 2rem; font-size: 0.75rem; color: var(--text-soft); }
+
+@media (max-width: 480px) {
+  body { padding: 1.5rem 0.75rem; }
+  .block { padding: 1.1rem 1.2rem; }
+  header { gap: 1rem; }
+}
+</style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4">
+<body>
+<div class="container">
 
-<div id="app-container" class="bg-white p-6 md:p-10 rounded-xl shadow-2xl w-full max-w-2xl border border-gray-100">
-
-    <!-- 標題 -->
-    <header class="text-center mb-8">
-        <h1 class="text-3xl font-extrabold text-pink-600 tracking-tight">
-            幼兒園親師溝通 SAY YES 教練
-        </h1>
-        <p class="text-gray-500 mt-2 text-lg">
-            請選擇情境，教練將依據您提供的資訊，協助潤飾訊息。
-        </p>
-    </header>
-    
-    <!-- 情境選擇器 -->
-    <div class="mb-4">
-        <label class="block text-lg font-medium text-gray-700 mb-2">
-            請選擇您想處理的情境：
-        </label>
-        <div class="flex space-x-4 bg-gray-100 p-2 rounded-lg">
-            <label class="flex-1">
-                <input type="radio" name="format-selector" value="event" id="format-event" class="hidden peer" checked>
-                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
-                    事件回覆 (Event)
-                </div>
-            </label>
-            <label class="flex-1">
-                <input type="radio" name="format-selector" value="affair" id="format-affair" class="hidden peer">
-                <div class="text-center py-2 px-4 rounded-lg cursor-pointer transition duration-150 ease-in-out bg-white text-gray-700 font-semibold shadow-md peer-checked:bg-pink-500 peer-checked:text-white peer-checked:shadow-lg hover:bg-gray-200">
-                    事務通知 (Affair)
-                </div>
-            </label>
-        </div>
+  <header>
+    <div class="logo-mark">S</div>
+    <div class="header-text">
+      <h1>SAY YES 親師溝通教練</h1>
+      <p>輸入重點，AI 協助潤飾為專業家長訊息</p>
     </div>
+  </header>
 
-    <!-- 老師輸入區（含固定提示框） -->
-    <div class="mb-6">
-        <label for="input-draft" class="block text-lg font-medium text-gray-700 mb-2">
-            教練的結構化輸入資訊
-        </label>
-
-        <!-- 事件回覆提示 -->
-        <div id="event-hint" class="mb-2 text-sm text-gray-500 italic bg-gray-50 border border-dashed border-gray-300 rounded-lg p-3">
-            範例填寫方式（事件回覆）：<br>
-            {事件性質}: 爭奪玩具推擠<br>
-            {摘要}: 兩位幼兒在角落區爭搶同一個玩具，情緒激動，有互相推擠的情形。<br>
-            {已採取措施}: 立即分開兩人，先安撫情緒，陪同說清楚彼此的想法與需求。<br>
-            {家長配合}: 在家可陪孩子練習輪流、說清楚需求的句子。<br>
-            {後續追蹤}: 老師會在角落區遊戲時多加觀察，適時提醒與引導。
-        </div>
-
-        <!-- 事務通知提示 -->
-        <div id="affair-hint" class="mb-2 text-sm text-gray-500 italic bg-gray-50 border border-dashed border-gray-300 rounded-lg p-3 hidden">
-            範例填寫方式（事務通知）：<br>
-            {事務主題}: 親子運動會補充說明<br>
-            {重要資訊}: 活動時間、集合地點、需自備物品等。<br>
-            {需要家長配合/回覆的事項}: 是否出席、飲食或健康注意事項回條。
-        </div>
-
-        <textarea id="input-draft" rows="8"
-                  class="w-full p-4 border-2 border-gray-300 rounded-lg focus:border-pink-500 focus:ring focus:ring-pink-200/50 transition duration-150 ease-in-out resize-none text-base"
-                  placeholder="請用自己的方式輸入想跟家長說明的重點，可以照上方範例結構，也可以只寫一兩句關鍵描述。"></textarea>
+  <!-- API Key -->
+  <div class="block" id="api-block">
+    <div class="section-label">
+      Google Gemini API Key
+      <span class="free-badge">免費</span>
     </div>
-
-    <!-- 精煉按鈕 -->
-    <button id="refine-button"
-            class="w-full bg-pink-600 hover:bg-pink-700 text-white font-bold py-3 px-4 rounded-lg transition duration-150 ease-in-out shadow-lg transform hover:scale-[1.01] active:scale-[0.99] disabled:opacity-60 disabled:cursor-not-allowed">
-        <span id="button-text">轉換為專業溝通訊息</span>
-        <svg id="loading-spinner" class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-        </svg>
-    </button>
-
-    <!-- 錯誤/提示訊息區 -->
-    <div id="message-box" class="mt-4 p-3 hidden rounded-lg bg-red-100 text-red-700 border border-red-200"></div>
-
-    <!-- 輸出區 -->
-    <div class="mt-8">
-        <h2 class="text-xl font-bold text-gray-700 mb-3 border-b pb-1">
-            潤飾後的家長訊息 (可直接複製使用)
-        </h2>
-        <div id="output-message" class="min-h-[250px] p-4 bg-gray-50 border border-gray-200 rounded-lg text-gray-800 whitespace-pre-wrap leading-relaxed transition-all duration-300">
-            按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。
-        </div>
+    <div class="api-input-wrap">
+      <input type="password" id="api-key-input" placeholder="AIza…" autocomplete="off" spellcheck="false">
+      <button class="api-toggle" id="api-toggle" title="顯示/隱藏">👁</button>
     </div>
+    <div class="api-status empty" id="api-status">尚未輸入 API Key</div>
+    <div class="api-hint">
+      Key 僅儲存於本機瀏覽器，不會上傳至任何伺服器。<br>
+      免費取得（需 Google 帳號，無需信用卡）：
+      <a href="https://aistudio.google.com/app/apikey" target="_blank">aistudio.google.com/app/apikey</a>
+    </div>
+  </div>
+
+  <!-- Scenario -->
+  <div class="block">
+    <div class="section-label">情境選擇</div>
+    <div class="tabs">
+      <div class="tab-item">
+        <input type="radio" name="scenario" value="event" id="tab-event" checked>
+        <label class="tab-label" for="tab-event">🔔 事件回覆</label>
+      </div>
+      <div class="tab-item">
+        <input type="radio" name="scenario" value="affair" id="tab-affair">
+        <label class="tab-label" for="tab-affair">📋 事務通知</label>
+      </div>
+    </div>
+    <div class="hint-box" id="event-hint">
+<div class="hint-title">填寫範例 — 事件回覆</div>{事件性質}: 爭奪玩具推擠
+{摘要}: 兩位幼兒在角落區爭搶同一個玩具，情緒激動，互相推擠。
+{已採取措施}: 立即分開，安撫情緒，陪同說清楚彼此的需求。
+{家長配合}: 在家可練習輪流、說清楚需求的句子。
+{後續追蹤}: 老師會在角落區多加觀察，適時引導。</div>
+    <div class="hint-box hidden" id="affair-hint">
+<div class="hint-title">填寫範例 — 事務通知</div>{事務主題}: 親子運動會補充說明
+{重要資訊}: 時間、集合地點、需自備物品。
+{家長配合}: 是否出席、飲食注意事項回條。</div>
+  </div>
+
+  <!-- Input -->
+  <div class="block">
+    <div class="section-label">輸入內容</div>
+    <textarea id="input-draft" placeholder="可以照上方範例結構填寫，也可以只寫幾句關鍵描述，AI 會自動補完。"></textarea>
+    <div class="tone-row">
+      <div class="tone-chip">
+        <input type="radio" name="tone" value="warm" id="tone-warm" checked>
+        <label for="tone-warm">💛 溫暖關懷</label>
+      </div>
+      <div class="tone-chip">
+        <input type="radio" name="tone" value="professional" id="tone-pro">
+        <label for="tone-pro">📌 專業正式</label>
+      </div>
+      <div class="tone-chip">
+        <input type="radio" name="tone" value="concise" id="tone-concise">
+        <label for="tone-concise">⚡ 簡潔明瞭</label>
+      </div>
+    </div>
+  </div>
+
+  <div class="message-box" id="message-box"></div>
+
+  <button class="btn-primary" id="refine-btn">
+    <div class="spinner" id="spinner"></div>
+    <span id="btn-text">✦ 生成專業訊息</span>
+  </button>
+
+  <!-- Output -->
+  <div class="output-block">
+    <div class="output-header">
+      <div class="output-header-left">
+        <div class="output-dot" id="output-dot"></div>
+        <div class="output-title">潤飾後的家長訊息</div>
+      </div>
+      <button class="btn-copy" id="copy-btn">
+        <span id="copy-icon">⎘</span>
+        <span id="copy-text">複製</span>
+      </button>
+    </div>
+    <div class="output-body" id="output-body">按下「生成專業訊息」後，AI 將依據您的輸入產出完整家長訊息。</div>
+  </div>
+
+  <footer>SAY YES 教練 · Powered by Gemini · Key 僅存於本機 · 每日免費 1500 次</footer>
 </div>
 
 <script>
-    const inputDraft = document.getElementById('input-draft');
-    const refineButton = document.getElementById('refine-button');
-    const buttonText = document.getElementById('button-text');
-    const loadingSpinner = document.getElementById('loading-spinner');
-    const outputMessage = document.getElementById('output-message');
-    const messageBox = document.getElementById('message-box');
-    const formatEventRadio = document.getElementById('format-event');
-    const formatAffairRadio = document.getElementById('format-affair');
-    const eventHint = document.getElementById('event-hint');
-    const affairHint = document.getElementById('affair-hint');
+const apiKeyInput = document.getElementById('api-key-input');
+const apiToggle   = document.getElementById('api-toggle');
+const apiStatus   = document.getElementById('api-status');
+const apiBlock    = document.getElementById('api-block');
+const tabEvent    = document.getElementById('tab-event');
+const tabAffair   = document.getElementById('tab-affair');
+const eventHint   = document.getElementById('event-hint');
+const affairHint  = document.getElementById('affair-hint');
+const inputDraft  = document.getElementById('input-draft');
+const refineBtn   = document.getElementById('refine-btn');
+const btnText     = document.getElementById('btn-text');
+const spinner     = document.getElementById('spinner');
+const messageBox  = document.getElementById('message-box');
+const outputBody  = document.getElementById('output-body');
+const outputDot   = document.getElementById('output-dot');
+const copyBtn     = document.getElementById('copy-btn');
+const copyIcon    = document.getElementById('copy-icon');
+const copyText    = document.getElementById('copy-text');
 
-    // 切換上方提示框
-    function updateHint(format) {
-        if (format === 'event') {
-            eventHint.classList.remove('hidden');
-            affairHint.classList.add('hidden');
-        } else {
-            eventHint.classList.add('hidden');
-            affairHint.classList.remove('hidden');
-        }
+// Restore saved key
+const savedKey = localStorage.getItem('sy_gemini_key');
+if (savedKey) { apiKeyInput.value = savedKey; updateApiStatus(savedKey); }
+
+function updateApiStatus(val) {
+  if (val && val.startsWith('AIza') && val.length > 20) {
+    apiStatus.textContent = 'API Key 已設定';
+    apiStatus.className = 'api-status ok';
+    apiBlock.classList.add('has-key');
+  } else if (val) {
+    apiStatus.textContent = '格式可能有誤（應以 AIza 開頭）';
+    apiStatus.className = 'api-status';
+    apiBlock.classList.remove('has-key');
+  } else {
+    apiStatus.textContent = '尚未輸入 API Key';
+    apiStatus.className = 'api-status empty';
+    apiBlock.classList.remove('has-key');
+  }
+}
+
+apiKeyInput.addEventListener('input', () => {
+  const val = apiKeyInput.value.trim();
+  updateApiStatus(val);
+  if (val) localStorage.setItem('sy_gemini_key', val);
+  else localStorage.removeItem('sy_gemini_key');
+});
+
+apiToggle.addEventListener('click', () => {
+  apiKeyInput.type = apiKeyInput.type === 'password' ? 'text' : 'password';
+});
+
+tabEvent.addEventListener('change', () => {
+  eventHint.classList.remove('hidden');
+  affairHint.classList.add('hidden');
+});
+tabAffair.addEventListener('change', () => {
+  affairHint.classList.remove('hidden');
+  eventHint.classList.add('hidden');
+});
+
+function showMsg(text, type = 'error') {
+  messageBox.textContent = text;
+  messageBox.className = 'message-box ' + type;
+  messageBox.style.display = 'block';
+}
+function clearMsg() { messageBox.style.display = 'none'; }
+
+copyBtn.addEventListener('click', () => {
+  if (!outputBody.classList.contains('has-content')) return;
+  navigator.clipboard.writeText(outputBody.textContent).then(() => {
+    copyBtn.classList.add('copied');
+    copyIcon.textContent = '✓'; copyText.textContent = '已複製';
+    setTimeout(() => {
+      copyBtn.classList.remove('copied');
+      copyIcon.textContent = '⎘'; copyText.textContent = '複製';
+    }, 2000);
+  });
+});
+
+function buildPrompt(isEvent, tone, draft) {
+  const toneDesc = {
+    warm: '語氣溫暖、有同理心，像一位關心孩子的好老師，讓家長感到被尊重和支持。',
+    professional: '語氣正式、專業，措辭嚴謹，讓家長感受到教師的專業度與責任心。',
+    concise: '語氣簡潔明瞭，不冗長，條列清楚，讓家長快速掌握重點。'
+  };
+
+  const intro = `你是一位幼兒園親師溝通專家，擅長幫助老師將口語描述潤飾為得體、專業的家長訊息。
+語氣要求：${toneDesc[tone]}
+語言：繁體中文，台灣用語。
+不要加任何 markdown 格式符號。
+直接輸出訊息本文，不要有任何前言或說明。`;
+
+  const structure = isEvent
+    ? `\n\n根據以下老師提供的事件資訊，寫一封給家長的訊息，包含：開頭問候、事件說明、老師已採取的措施、家長在家可配合的方向、後續在園的追蹤、溫暖結尾。若資訊不完整，請合理補充。`
+    : `\n\n根據以下老師提供的事務資訊，寫一封給家長的通知，包含：開頭問候與主旨說明、重要資訊（條列）、需家長配合的事項、溫暖結尾。若資訊不完整，請合理補充。`;
+
+  return intro + structure + `\n\n老師提供的資訊：\n${draft}`;
+}
+
+async function refineMessage() {
+  clearMsg();
+  const apiKey  = apiKeyInput.value.trim();
+  const draft   = inputDraft.value.trim();
+  const isEvent = tabEvent.checked;
+  const tone    = document.querySelector('input[name="tone"]:checked').value;
+
+  if (!apiKey) { showMsg('請先輸入 Google Gemini API Key。'); apiKeyInput.focus(); return; }
+  if (!draft || draft.length < 3) { showMsg('請先輸入想跟家長說明的內容。'); inputDraft.focus(); return; }
+
+  refineBtn.disabled = true;
+  spinner.style.display = 'block';
+  btnText.textContent = 'AI 思考中…';
+  outputBody.textContent = '';
+  outputBody.classList.remove('has-content');
+  outputDot.classList.remove('active');
+
+  const cursorEl = document.createElement('span');
+  cursorEl.className = 'cursor';
+  outputBody.appendChild(cursorEl);
+
+  const prompt = buildPrompt(isEvent, tone, draft);
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:streamGenerateContent?key=${apiKey}&alt=sse`;
+
+  try {
+    const response = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: prompt }] }],
+        generationConfig: { maxOutputTokens: 1024, temperature: 0.7 }
+      })
+    });
+
+    if (!response.ok) {
+      let errMsg = `API 錯誤（${response.status}）`;
+      try {
+        const errData = await response.json();
+        if (errData.error?.message) errMsg = errData.error.message;
+        if (response.status === 400) errMsg = 'API Key 無效或請求格式錯誤，請確認 Key 是否正確。';
+        if (response.status === 403) errMsg = 'API Key 無效或未啟用 Gemini API，請至 aistudio.google.com 確認。';
+        if (response.status === 429) errMsg = '今日免費額度已達上限，請明天再試。';
+      } catch(_) {}
+      throw new Error(errMsg);
     }
 
-    function showMessage(text, isError = true) {
-        messageBox.textContent = text;
-        messageBox.className = isError
-            ? "mt-4 p-3 rounded-lg bg-red-100 text-red-700 border border-red-200"
-            : "mt-4 p-3 rounded-lg bg-green-100 text-green-700 border border-green-200";
-        messageBox.style.display = 'block';
-    }
+    const reader  = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText  = '';
+    let buffer    = '';
 
-    function clearMessage() {
-        messageBox.style.display = 'none';
-        messageBox.textContent = '';
-    }
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop(); // keep incomplete line
 
-    // 解析老師輸入的結構化文字（如果有就用，沒有就當成自由輸入）
-    function parseStructuredInput(draft, isEvent) {
-        const lines = draft.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-        const data = {
-            事件性質: "",
-            摘要: "",
-            已採取措施: "",
-            家長配合: "",
-            後續追蹤: "",
-            事務主題: "",
-            重要資訊: "",
-            家長行動: "",
-            自由輸入: draft.trim()
-        };
-
-        lines.forEach(line => {
-            const sepIndex = line.indexOf(':') !== -1 ? line.indexOf(':') : line.indexOf('：');
-            if (sepIndex === -1) return;
-            const rawKey = line.slice(0, sepIndex).replace(/[{}]/g, "").trim();
-            const value = line.slice(sepIndex + 1).trim();
-
-            if (rawKey.includes('事件性質')) data.事件性質 = value;
-            else if (rawKey.includes('摘要')) data.摘要 = value;
-            else if (rawKey.includes('已採取措施') || rawKey.includes('已采取措施')) data.已採取措施 = value;
-            else if (rawKey.includes('家長配合')) data.家長配合 = value;
-            else if (rawKey.includes('後續追蹤')) data.後續追蹤 = value;
-            else if (rawKey.includes('事務主題')) data.事務主題 = value;
-            else if (rawKey.includes('重要資訊')) data.重要資訊 = value;
-            else if (rawKey.includes('需要家長配合') || rawKey.includes('回覆的事項')) data.家長行動 = value;
-        });
-
-        // 如果老師沒有照結構填，就把整段當成摘要或事務內容
-        if (isEvent) {
-            if (!data.事件性質) {
-                const firstLine = lines[0] || draft;
-                data.事件性質 = firstLine.slice(0, 15);
-            }
-            if (!data.摘要) {
-                data.摘要 = draft.trim();
-            }
-        } else {
-            if (!data.事務主題) {
-                const firstLine = lines[0] || draft;
-                data.事務主題 = firstLine.slice(0, 20);
-            }
-            if (!data.重要資訊) {
-                data.重要資訊 = draft.trim();
-            }
-        }
-
-        return data;
-    }
-
-    // 組合「事件回覆」訊息（本地模板）
-    function buildEventMessage(data) {
-        const e = (t) => t && t.length > 0 ? t : "（老師可依實際情況補充）";
-
-        return `家長您好：
-
-今天在園內發生一件關於「${e(data.事件性質)}」的小狀況，想先主動跟您說明，讓我們一起陪孩子練習面對人際互動。
-
-【事件經過】
-${e(data.摘要)}
-
-【老師當下的處理】
-${e(data.已採取措施)}
-
-【在家可以一起配合的方向】
-${e(data.家長配合)}
-
-【後續在園的追蹤】
-${e(data.後續追蹤)}
-
-我們都很關心孩子在園內的安全與情緒，也希望透過這次的經驗，陪孩子學會更好的表達與合作方式。如果您有任何想法或擔心，都非常歡迎隨時與我分享，一起討論最適合孩子的做法。
-
-謝謝您一直以來的支持與信任。`;
-    }
-
-    // 組合「事務通知」訊息（本地模板）
-    function buildAffairMessage(data) {
-        const e = (t) => t && t.length > 0 ? t : "（老師可依實際情況補充）";
-
-        let infoBlock = e(data.重要資訊);
-        if (!infoBlock.startsWith('1.') && infoBlock.includes('、')) {
-            const parts = infoBlock.split(/、|\n/).map(p => p.trim()).filter(p => p.length > 0);
-            if (parts.length > 1) {
-                infoBlock = parts.map((p, i) => `${i + 1}. ${p}`).join('\n');
-            }
-        }
-
-        return `家長您好：
-
-關於${e(data.事務主題)}，想先和您說明相關安排如下，方便您事先了解與準備。
-
-【重要資訊】
-${infoBlock}
-
-【請家長協助的部分】
-${e(data.家長行動)}
-
-若您在時間或安排上有任何困難，都可以再與我或園方聯繫，我們會一起想合適的調整方式。也謝謝您在忙碌之餘，仍願意與我們一同配合與支持。
-
-再次感謝您的理解與協助。`;
-    }
-
-    async function refineMessage() {
-        clearMessage();
-        const draft = inputDraft.value.trim();
-        const isEvent = formatEventRadio.checked;
-
-        // 只要有打一點點就可以，不再要求完整格式
-        if (draft.length < 2) {
-            showMessage("請先在上方輸入想跟家長說明的內容，可以只寫一兩句。", true);
-            return;
-        }
-
-        refineButton.disabled = true;
-        buttonText.textContent = "教練思考中...";
-        loadingSpinner.classList.remove('hidden');
-        outputMessage.textContent = '教練正在依據您提供的重點，整理合適的家長訊息...';
-        outputMessage.classList.add('animate-pulse');
-
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (!data || data === '[DONE]') continue;
         try {
-            const data = parseStructuredInput(draft, isEvent);
-            const resultText = isEvent ? buildEventMessage(data) : buildAffairMessage(data);
-            outputMessage.textContent = resultText;
-        } catch (error) {
-            console.error(error);
-            showMessage("轉換過程中發生小問題，請稍後再試或檢查輸入格式。", true);
-            outputMessage.textContent = '轉換失敗，請重新整理頁面或稍後再試。';
-        } finally {
-            refineButton.disabled = false;
-            buttonText.textContent = "轉換為專業溝通訊息";
-            loadingSpinner.classList.add('hidden');
-            outputMessage.classList.remove('animate-pulse');
-        }
+          const parsed = JSON.parse(data);
+          const text = parsed.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) {
+            fullText += text;
+            outputBody.textContent = fullText;
+            outputBody.appendChild(cursorEl);
+            outputBody.classList.add('has-content');
+          }
+        } catch(_) {}
+      }
     }
 
-    refineButton.addEventListener('click', refineMessage);
-    formatEventRadio.addEventListener('change', () => updateHint('event'));
-    formatAffairRadio.addEventListener('change', () => updateHint('affair'));
+    cursorEl.remove();
+    outputBody.textContent = fullText || '（未收到回應，請再試一次）';
+    if (fullText) outputBody.classList.add('has-content');
+    outputDot.classList.add('active');
 
-    window.onload = () => {
-        updateHint('event');
-        outputMessage.textContent = '按下「轉換為專業溝通訊息」按鈕，教練將為您生成訊息。';
-    };
+  } catch (err) {
+    cursorEl.remove();
+    outputBody.textContent = '';
+    outputBody.classList.remove('has-content');
+    showMsg('⚠ ' + (err.message || '發生未知錯誤，請稍後再試。'));
+  } finally {
+    refineBtn.disabled = false;
+    spinner.style.display = 'none';
+    btnText.textContent = '✦ 生成專業訊息';
+  }
+}
+
+refineBtn.addEventListener('click', refineMessage);
 </script>
-
 </body>
 </html>
